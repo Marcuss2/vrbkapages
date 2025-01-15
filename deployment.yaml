@@ -7,20 +7,19 @@ metadata:
 spec:
   containers:
     - name: rpxy
-      image: ghcr.io/junkurihara/rust-rpxy:latest
+      image: ghcr.io/junkurihara/rust-rpxy:latest-slim
       ports:
-        - containerPort: 443
+        - containerPort: 8443
           hostPort: 8443
-        - containerPort: 80
+        - containerPort: 8080
           hostPort: 8080
-      env:
-        - name: RUST_LOG
-          value: "info"
       volumeMounts:
         - name: config-vol
-          mountPath: /etc/config
+          mountPath: /rpxy/config:z
+          readOnly: true
         - name: cert-vol
-          mountPath: /etc/certificates
+          mountPath: /etc/certificates:z
+          readOnly: true
 
     - name: vrbkapages-backend
       image: localhost/vrbkapages-backend:latest
@@ -29,22 +28,13 @@ spec:
       env:
         - name: RUST_LOG
           value: "debug"
-      livenessProbe:
-        - httpGet:
-            - path: /health
-              port: 3000
-          initialDelaySeconds: 5
-          periodSeconds: 30
-      volumeMounts:
-        - name: config-vol
-          mountPath: /etc/config
 
   volumes:
     - name: config-vol
       hostPath:
-        path: /home/opc/config
+        path: /home/opc/config/
         type: Directory
-    - name: certificates
+    - name: cert-vol
       hostPath:
         path: /home/opc/certificates
         type: Directory
