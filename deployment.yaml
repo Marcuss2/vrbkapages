@@ -27,7 +27,12 @@ spec:
         - containerPort: 3000
       env:
         - name: RUST_LOG
-          value: "debug"
+          value: "info"
+        - name: DIST_DIRECTORY
+          value: "/dist"
+      volumeMounts:
+        - name: site-vol
+          mountPath: /dist:z
 
   volumes:
     - name: config-vol
@@ -37,4 +42,8 @@ spec:
     - name: cert-vol
       hostPath:
         path: /home/opc/certificates
+        type: Directory
+    - name: site-vol
+      hostPath:
+        path: /home/opc/vrbkapages/dist
         type: Directory
