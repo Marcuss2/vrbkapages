@@ -18,7 +18,7 @@ async fn health_check() -> impl IntoResponse {
 async fn main() -> Result<(), std::io::Error> {
     tracing_subscriber::fmt::init();
 
-    let static_files_service = get_service(ServeDir::new("static"));
+    let static_files_service = get_service(ServeDir::new("../dist"));
 
     let app = Router::new()
         .fallback_service(static_files_service)
