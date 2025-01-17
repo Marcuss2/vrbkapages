@@ -1,0 +1,23 @@
+log_level = "debug"
+log_target = "stdout"
+worker_count = 1
+max_connections = 500
+max_buffers = 500
+buffer_size = 16384
+activate_listeners = true
+
+[[listeners]]
+protocol = "https"
+address = "[::]:8443"
+
+[clusters.vrbkapages-backend]
+protocol = "http"
+
+frontends = [
+  { address = "[::]:8443", hostname = "marekvrbka.cz", certificate = "/etc/certificates/server.pem", key = "/etc/certificates/server.key" }
+]
+
+backends = [
+  { address = "127.0.0.1:3000", backend_id = "vrbkapages-backend-1"}
+]
+

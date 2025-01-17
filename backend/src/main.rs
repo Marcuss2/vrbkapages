@@ -2,27 +2,26 @@ use std::time::Duration;
 use axum::extract::MatchedPath;
 use axum::http::{Request, StatusCode};
 use axum::response::{Html, IntoResponse, Response};
-use axum::routing::get;
+use axum::routing::{get, get_service};
 use axum::Router;
 use tokio::net::TcpListener;
 use tower_http::classify::ServerErrorsFailureClass;
 use tower_http::trace::TraceLayer;
+use tower_http::services::ServeDir;
 use tracing::{event, info, info_span, Level, Span};
 
 async fn health_check() -> impl IntoResponse {
     StatusCode::OK
 }
 
-async fn index() -> Html<&'static str> {
-    Html("<h1>Hello, World!</h1>")
-}
-
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
     tracing_subscriber::fmt::init();
 
+    let static_files_service = get_service(ServeDir::new("static"));
+
     let app = Router::new()
-        .route("/", get(index))
+        .fallback_service(static_files_service)
         .route("/health_check", get(health_check))
         .layer(
             TraceLayer::new_for_http()

@@ -2,7 +2,9 @@ FROM rust:1.84-alpine
 
 WORKDIR /usr/src/app
 
-COPY * ./
+COPY . ./
+
+RUN apk add musl-dev
 
 RUN cargo build --release
 

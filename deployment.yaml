@@ -6,20 +6,20 @@ metadata:
     app: vrbkapages-service
 spec:
   containers:
-    - name: rpxy
-      image: ghcr.io/junkurihara/rust-rpxy:latest-slim
+    - name: sozu
+      image: sozu-local:latest
       ports:
         - containerPort: 8443
           hostPort: 8443
-        - containerPort: 8080
-          hostPort: 8080
       volumeMounts:
         - name: config-vol
-          mountPath: /rpxy/config:z
+          mountPath: /etc/config:z
           readOnly: true
         - name: cert-vol
           mountPath: /etc/certificates:z
           readOnly: true
+      command: ["/usr/local/bin/sozu"]
+      args: ["start", "-c", "/etc/config/sozu.toml"]
 
     - name: vrbkapages-backend
       image: localhost/vrbkapages-backend:latest
@@ -32,7 +32,7 @@ spec:
   volumes:
     - name: config-vol
       hostPath:
-        path: /home/opc/config/
+        path: /home/opc/vrbkapages/config/
         type: Directory
     - name: cert-vol
       hostPath:
