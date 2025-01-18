@@ -1,12 +1,12 @@
-use axum::extract::MatchedPath;
-use axum::http::{Request, StatusCode};
+use axum::extract::{MatchedPath, Path};
+use axum::http::{Request, StatusCode, Uri};
 use axum::response::{IntoResponse, Response};
 use axum::routing::{get, get_service};
 use axum::Router;
 use std::time::Duration;
 use tokio::net::TcpListener;
 use tower_http::classify::ServerErrorsFailureClass;
-use tower_http::services::ServeDir;
+use tower_http::services::{ServeDir, ServeFile};
 use tower_http::trace::TraceLayer;
 use tracing::{event, info, info_span, Level, Span};
 
@@ -18,13 +18,11 @@ async fn health_check() -> impl IntoResponse {
 async fn main() -> Result<(), std::io::Error> {
     tracing_subscriber::fmt::init();
 
-    let static_files_service = get_service(ServeDir::new(
-        std::env::var("DIST_DIRECTORY").unwrap_or("../dist".into()),
-    ));
+    let dist_dir = std::env::var("DIST_DIRECTORY").unwrap_or("../dist".into());
 
     let app = Router::new()
-        .fallback_service(static_files_service)
         .route("/health_check", get(health_check))
+        .fallback_service(get_service(ServeDir::new(dist_dir.clone()).not_found_service(ServeFile::new(dist_dir + "/index.html"))))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(|request: &Request<_>| {
@@ -41,7 +39,7 @@ async fn main() -> Result<(), std::io::Error> {
                     )
                 })
                 .on_request(|request: &Request<_>, _span: &Span| {
-                    event!(Level::INFO, "Request {} received.", request.method());
+                    event!(Level::INFO, "Request {} {} received.", request.method(), request.uri());
                 })
                 .on_response(|_response: &Response, latency: Duration, _span: &Span| {
                     event!(
