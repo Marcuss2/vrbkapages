@@ -1,0 +1,20 @@
+[workspace]
+
+resolver = "2"
+
+members = [
+    "backend",
+    "frontend",
+    "frontend-assembly"
+]
+
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
+
+
+[workspace.metadata.leptos]
+lib-profile-release = "wasm-release"

@@ -28,11 +28,11 @@ spec:
       env:
         - name: RUST_LOG
           value: "info"
-        - name: DIST_DIRECTORY
-          value: "/dist"
+        - name: DIST_FRONTEND_DIRECTORY
+          value: "/dist-frontend"
       volumeMounts:
         - name: site-vol
-          mountPath: /dist:z
+          mountPath: /dist-frontend:z
 
   volumes:
     - name: config-vol

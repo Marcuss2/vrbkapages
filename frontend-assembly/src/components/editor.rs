@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use leptos::{component, ev, html};
 use itertools::Itertools;
-
+use thaw::{Flex, FlexGap};
 
 ///
 /// Simple code editor component which always updates on each change.
@@ -25,16 +25,10 @@ pub fn CodeEditor(content: RwSignal<String>) -> impl IntoView {
     };
 
     view! {
-        <div style="
-            display: grid;
-            grid-template-columns: auto 1fr;
-            font-family: monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            background: #f6f8fa;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        ">
+        <Flex vertical=false gap=FlexGap::Small
+            style="
+                border: 5px solid black;
+                border-radius: 10px;">
             <div
                 node_ref=line_numbers_ref
                 style="
@@ -73,6 +67,6 @@ pub fn CodeEditor(content: RwSignal<String>) -> impl IntoView {
                 prop:value=content.get_untracked()
                 spellcheck="false"
             />
-        </div>
+        </Flex>
     }
 }

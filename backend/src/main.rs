@@ -1,5 +1,5 @@
-use axum::extract::{MatchedPath, Path};
-use axum::http::{Request, StatusCode, Uri};
+use axum::extract::MatchedPath;
+use axum::http::{Request, StatusCode};
 use axum::response::{IntoResponse, Response};
 use axum::routing::{get, get_service};
 use axum::Router;
@@ -18,7 +18,7 @@ async fn health_check() -> impl IntoResponse {
 async fn main() -> Result<(), std::io::Error> {
     tracing_subscriber::fmt::init();
 
-    let dist_dir = std::env::var("DIST_DIRECTORY").unwrap_or("../dist".into());
+    let dist_dir = std::env::var("DIST_FRONTEND_DIRECTORY").unwrap_or("../dist-frontend".into());
 
     let app = Router::new()
         .route("/health_check", get(health_check))
