@@ -30,9 +30,13 @@ spec:
           value: "info"
         - name: DIST_FRONTEND_DIRECTORY
           value: "/dist-frontend"
+        - name: DIST_ASSEMBLY_DIRECTORY
+          value: "/dist-assembly"
       volumeMounts:
         - name: site-vol
           mountPath: /dist-frontend:z
+        - name: assembly-vol
+          mountPath: /dist-assembly:z
 
   volumes:
     - name: config-vol
@@ -45,5 +49,9 @@ spec:
         type: Directory
     - name: site-vol
       hostPath:
-        path: /home/opc/vrbkapages/dist
+        path: /home/opc/vrbkapages/dist-frontend
+        type: Directory
+    - name: assembly-vol
+      hostPath:
+        path: /home/opc/vrbkapages/dist-assembly
         type: Directory
