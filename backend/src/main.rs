@@ -19,10 +19,22 @@ async fn main() -> Result<(), std::io::Error> {
     tracing_subscriber::fmt::init();
 
     let dist_dir = std::env::var("DIST_FRONTEND_DIRECTORY").unwrap_or("../dist-frontend".into());
+    let dist_assembly_dir =
+        std::env::var("DIST_ASSEMBLY_DIRECTORY").unwrap_or("../dist-assembly".into());
 
     let app = Router::new()
         .route("/health_check", get(health_check))
-        .fallback_service(get_service(ServeDir::new(dist_dir.clone()).not_found_service(ServeFile::new(dist_dir + "/index.html"))))
+        .route(
+            "/assembly",
+            get_service(
+                ServeDir::new(dist_assembly_dir.clone())
+                    .not_found_service(ServeFile::new(dist_assembly_dir + "/index.html")),
+            ),
+        )
+        .fallback_service(get_service(
+            ServeDir::new(dist_dir.clone())
+                .not_found_service(ServeFile::new(dist_dir + "/index.html")),
+        ))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(|request: &Request<_>| {
@@ -39,7 +51,12 @@ async fn main() -> Result<(), std::io::Error> {
                     )
                 })
                 .on_request(|request: &Request<_>, _span: &Span| {
-                    event!(Level::INFO, "Request {} {} received.", request.method(), request.uri());
+                    event!(
+                        Level::INFO,
+                        "Request {} {} received.",
+                        request.method(),
+                        request.uri()
+                    );
                 })
                 .on_response(|_response: &Response, latency: Duration, _span: &Span| {
                     event!(
