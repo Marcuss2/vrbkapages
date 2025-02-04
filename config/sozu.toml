@@ -10,14 +10,30 @@ activate_listeners = true
 protocol = "https"
 address = "[::]:8443"
 
-[clusters.vrbkapages-backend]
+certificate = "/etc/certificates/server.pem"
+key = "/etc/certificates/server.key"
+
+[clusters]
+
+[clusters.assembly-dist]
 protocol = "http"
 
 frontends = [
-  { address = "[::]:8443", hostname = "marekvrbka.cz", certificate = "/etc/certificates/server.pem", key = "/etc/certificates/server.key" }
+  { address = "[::]:8443", hostname = "marekvrbka.cz", path = "/assembly" }
 ]
 
 backends = [
-  { address = "127.0.0.1:3000", backend_id = "vrbkapages-backend-1"}
+  { address = "127.0.0.1:4001", backend_id = "assembly-dist"}
+]
+
+[clusters.root-dist]
+protocol = "http"
+
+frontends = [
+  { address = "[::]:8443", hostname = "marekvrbka.cz" }
+]
+
+backends = [
+  { address = "127.0.0.1:4000", backend_id = "root-dist"}
 ]
 

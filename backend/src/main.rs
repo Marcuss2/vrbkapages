@@ -14,6 +14,7 @@ async fn health_check() -> impl IntoResponse {
     StatusCode::OK
 }
 
+// Note: This currently isn't needed
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
     tracing_subscriber::fmt::init();
