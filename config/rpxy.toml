@@ -3,6 +3,8 @@
 ###################################
 # Both or either one of http/https ports must be specified
 listen_port_tls = 8443
+listen_port = 8080
+https_redirection_port = 443
 
 # Optional for h2 and http1.1
 tcp_listen_backlog = 1024
@@ -26,7 +28,7 @@ listen_ipv6 = true
 [apps.dist]
 server_name = 'marekvrbka.cz' # Domain name
 
-tls = { tls_cert_path = '/etc/certificates/server.pem', tls_cert_key_path = '/etc/certificates/server.key' }
+tls = { https_redirection = true, tls_cert_path = '/etc/certificates/server.pem', tls_cert_key_path = '/etc/certificates/server.key' }
 
 [[apps.dist.reverse_proxy]]
 upstream = [{ location = 'root-dist:4000', tls = false }]
