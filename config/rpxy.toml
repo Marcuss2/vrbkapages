@@ -35,5 +35,4 @@ upstream = [{ location = 'root-dist:4000', tls = false }]
 
 [[apps.dist.reverse_proxy]]
 path = '/assembly'
-replace_path = '/'
 upstream = [{ location = 'assembly-dist:4001', tls = false }]

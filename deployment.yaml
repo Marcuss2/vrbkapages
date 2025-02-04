@@ -50,6 +50,8 @@ spec:
           value: "true"
         - name: MINISERVE_INDEX
           value: "index.html"
+        - name: MINISERVE_ROUTE_PREFIX
+          value: "/assembly"
       args: ["/dist"]
       volumeMounts:
         - name: assembly-vol
