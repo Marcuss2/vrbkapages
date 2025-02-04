@@ -18,7 +18,7 @@ spec:
         - name: cert-vol
           mountPath: /etc/certificates:z
           readOnly: true
-      cmd: "/rpxy/bin/rpxy"
+      command: ["/rpxy/bin/rpxy"]
       args: ["--config", "/rpxy/config/rpxy.toml"]
 
     - name: root-dist
