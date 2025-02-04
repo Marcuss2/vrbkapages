@@ -6,20 +6,18 @@ metadata:
     app: vrbkapages-service
 spec:
   containers:
-    - name: sozu
-      image: sozu-local:latest
+    - name: rpxy
+      image: ghcr.io/junkurihara/rust-rpxy:latest-slim
       ports:
         - containerPort: 8443
           hostPort: 8443
       volumeMounts:
         - name: config-vol
-          mountPath: /etc/config:z
+          mountPath: /rpxy/config:z
           readOnly: true
         - name: cert-vol
           mountPath: /etc/certificates:z
           readOnly: true
-      command: ["/usr/local/bin/sozu"]
-      args: ["start", "-c", "/etc/config/sozu.toml"]
 
     - name: root-dist
       image: docker.io/svenstaro/miniserve
@@ -48,8 +46,6 @@ spec:
           value: "true"
         - name: MINISERVE_INDEX
           value: "index.html"
-        - name: MINISERVE_ROUTE_PREFIX
-          value: "/assembly"
       args: ["/dist"]
       volumeMounts:
         - name: assembly-vol
