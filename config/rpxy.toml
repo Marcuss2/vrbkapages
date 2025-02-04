@@ -26,7 +26,7 @@ listen_ipv6 = true
 [apps.dist]
 server_name = 'marekvrbka.cz' # Domain name
 
-tls = { https_redirection = true, tls_cert_path = '/etc/certificates/server.pem', tls_cert_key_path = '/etc/certificates/server.key' }
+tls = { tls_cert_path = '/etc/certificates/server.pem', tls_cert_key_path = '/etc/certificates/server.key' }
 
 [[apps.dist.reverse_proxy]]
 upstream = [{ location = 'root-dist:4000', tls = false }]
