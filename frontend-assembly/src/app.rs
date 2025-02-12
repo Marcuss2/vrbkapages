@@ -36,7 +36,7 @@ pub fn App() -> impl IntoView {
                     <CardHeader>
                         <b>"Parsing result"</b>
                     </CardHeader>
-                    <Text style="white-space: pre-line">{move || assembly_result.get()}</Text>
+                    <Text style="white-space: pre-wrap">{move || assembly_result.get()}</Text>
                 </Card>
             </Flex>
         </ConfigProvider>

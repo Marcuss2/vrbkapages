@@ -1,3 +1,9 @@
+[build]
+public_url = "/assembly/"
+
+[tools]
+wasm_opt = "version_122"
+
 [[hooks]]
 stage = "pre_build"
 command = "cargo"
