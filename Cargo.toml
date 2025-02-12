@@ -2,7 +2,7 @@
 
 resolver = "2"
 
-members = [
+members = [ "assembly-compiler",
     "backend",
     "frontend",
     "frontend-assembly"

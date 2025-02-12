@@ -1,0 +1,121 @@
+//
+// Pest file for parsing RISC-V RV32I assembly
+//
+
+COMMENT = _{ (("#" | "//") ~ (!NEWLINE ~ ANY)* ~ &NEWLINE) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") }
+WHITESPACE = _{ " " | "\t" }
+
+program = _{ SOI ~ (symbol? ~ (NEWLINE | ";"))* ~ symbol? ~ EOI }
+symbol = _{ (label ~ (instruction | directive)?) | (instruction | directive) }
+
+label = @{ ASCII_ALPHANUMERIC+ ~ ":" }
+mnemonic = @{ ASCII_ALPHA+ }
+
+balign = !{ "balign" ~ NUMBER+ }
+section = { ASCII_ALPHANUMERIC+ }
+directive = ${ "." ~ (balign | section) }
+
+x0 = { "x0" | "zero" }
+x1 = { "x1" | "ra" }
+x2 = { "x2" | "sp" }
+x3 = { "x3" | "gp" }
+x4 = { "x4" | "tp" }
+x5 = { "x5" | "t0" }
+x6 = { "x6" | "t1" }
+x7 = { "x7" | "t2" }
+x8 = { "x8" | "s0" | "fp" }
+x9 = { "x9" | "s1" }
+x10 = { "x10" | "a0" }
+x11 = { "x11" | "a1" }
+x12 = { "x12" | "a2" }
+x13 = { "x13" | "a3" }
+x14 = { "x14" | "a4" }
+x15 = { "x15" | "a5" }
+x16 = { "x16" | "a6" }
+x17 = { "x17" | "a7" }
+x18 = { "x18" | "s2" }
+x19 = { "x19" | "s3" }
+x20 = { "x20" | "s4" }
+x21 = { "x21" | "s5" }
+x22 = { "x22" | "s6" }
+x23 = { "x23" | "s7" }
+x24 = { "x24" | "s8" }
+x25 = { "x25" | "s9" }
+x26 = { "x26" | "s10" }
+x27 = { "x27" | "s11" }
+x28 = { "x28" | "t3" }
+x29 = { "x29" | "t4" }
+x30 = { "x30" | "t5" }
+x31 = { "x31" | "t6" }
+
+register = {
+    (
+    x10 | x11 | x12 | x13 | x14 | x15 | x16 | x17 | x18 | x19 |
+    x20 | x21 | x22 | x23 | x24 | x25 | x26 | x27 | x28 | x29 |
+    x30 | x31 | x0 | x1 | x2 | x3 | x4 | x5 | x6 | x7 | x8 | x9
+    )
+}
+
+immediate = { ("0x" ~ HEX_DIGIT+) | ("0b" ~ ('0'..'1')+) | ("-"? ~ ASCII_DIGIT+) }
+
+// Pseudo instructions
+pseudo_nop = { "nop" }
+pseudo_li = { "li" ~ register ~ "," ~ immediate }
+pseudo_la = { "la" ~ register ~ "," ~ label }
+pseudo_mv = { "mv" ~ register ~ "," ~ register }
+pseudo_not = { "not" ~ register ~ "," ~ register }
+pseudo_neg = { "neg" ~ register ~ "," ~ register }
+pseudo_seqz = { "seqz" ~ register ~ "," ~ register }
+pseudo_snez = { "snez" ~ register ~ "," ~ register }
+pseudo_sltz = { "sltz" ~ register ~ "," ~ register }
+pseudo_sgtz = { "sgtz" ~ register ~ "," ~ register }
+pseudo_beqz = { "beqz" ~ register ~ "," ~ register }
+pseudo_bnez = { "bnez" ~ register ~ "," ~ register }
+pseudo_ble = { "ble" ~ register ~ "," ~ register }
+pseudo_bgez = { "bgez" ~ register ~ "," ~ register }
+pseudo_bltz = { "bltz" ~ register ~ "," ~ register }
+pseudo_bgtz = { "bgtz" ~ register ~ "," ~ register }
+pseudo_bgt = { "bgt" ~ register ~ "," ~ register }
+pseudo_bgtu = { "bgtu" ~ register ~ "," ~ register }
+pseudo_bleu = { "bleu" ~ register ~ "," ~ register }
+pseudo_j = { "j" ~ register ~ "," ~ register }
+pseudo_jr = { "jr" ~ register ~ "," ~ register }
+pseudo_ret = { "ret" ~ register ~ "," ~ register }
+
+r_type_literal = { "add" | "sub" | "xor" | "or" | "and" | "sll" | "srl" | "sra" | "slt" | "sltu" }
+i_type_literal = { "addi" | "slli" | "slti" | "sltiu" | "xori" | "ori" | "andi" | "srli" | "srai" }
+
+r_type = { r_add | r_sub | r_xor | r_or | r_and | r_sll | r_srl | r_sra | r_slt | r_sltu }
+i_type = { i_addi | i_slli | i_slti | i_sltiu | i_xori | i_ori | i_andi | i_srli | i_srai }
+s_type = { ("sb" | "sh" | "sw") ~ register ~ "," ~ immediate ~ "[" ~ register ~ "]" }
+b_type = { ("beq" | "bne" | "blt" | "bge" | "bltu" | "bgeu") ~ register ~ "," ~ register ~ (label | immediate) }
+u_type = { ("lui" | "auipc") ~ register ~ immediate }
+j_type = { "jal" ~ register ~ (label | immediate) }
+pseudo = _{
+    pseudo_nop | pseudo_li | pseudo_la | pseudo_mv | pseudo_not | pseudo_neg |
+    pseudo_seqz | pseudo_snez | pseudo_sltz | pseudo_sgtz | pseudo_beqz | pseudo_bnez |
+    pseudo_ble | pseudo_bgez | pseudo_bltz | pseudo_bgtz | pseudo_bgt | pseudo_bgtu |
+    pseudo_bleu | pseudo_j | pseudo_jr | pseudo_ret
+}
+instruction = { (r_type | i_type | s_type | b_type | u_type | j_type | pseudo)}
+
+r_add = { "add" ~ register ~ "," ~ register ~ "," ~ register }
+r_sub = { "sub" ~ register ~ "," ~ register ~ "," ~ register }
+r_xor = { "xor" ~ register ~ "," ~ register ~ "," ~ register }
+r_or = { "or" ~ register ~ "," ~ register ~ "," ~ register }
+r_and = { "and" ~ register ~ "," ~ register ~ "," ~ register }
+r_sll = { "sll" ~ register ~ "," ~ register ~ "," ~ register }
+r_srl = { "srl" ~ register ~ "," ~ register ~ "," ~ register }
+r_sra = { "sra" ~ register ~ "," ~ register ~ "," ~ register }
+r_slt = { "slt" ~ register ~ "," ~ register ~ "," ~ register }
+r_sltu = { "sltu" ~ register ~ "," ~ register ~ "," ~ register }
+
+i_addi = { "addi" ~ register ~ "," ~ register ~ "," ~ immediate }
+i_slli = { "slli" ~ register ~ "," ~ register ~ "," ~ immediate }
+i_slti = { "slti" ~ register ~ "," ~ register ~ "," ~ immediate }
+i_sltiu = { "sltiu" ~ register ~ "," ~ register ~ "," ~ immediate }
+i_xori = { "xori" ~ register ~ "," ~ register ~ "," ~ immediate }
+i_ori = { "ori" ~ register ~ "," ~ register ~ "," ~ immediate }
+i_andi = { "andi" ~ register ~ "," ~ register ~ "," ~ immediate }
+i_srli = { "srli" ~ register ~ "," ~ register ~ "," ~ immediate }
+i_srai = { "srai" ~ register ~ "," ~ register ~ "," ~ immediate }
