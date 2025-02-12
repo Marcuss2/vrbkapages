@@ -1,0 +1,12 @@
+[package]
+name = "assembly-compiler"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pest = { version = "2.7.15", features = ["miette-error"] }
+pest-ast = "0.3.5"
+pest_derive = "2.7.15"
+
+[dev-dependencies]
+rstest = { version = "0.24.0", features = [] }
