@@ -1,10 +1,8 @@
 use leptos::logging::log;
 use leptos::prelude::*;
-use leptos::tachys::html::class::IntoClass;
-use reactive_stores::OptionStoreExt;
-use thaw::{ButtonAppearance, Card, CardHeader, ConfigProvider, Flex, Layout, Text, Textarea, TextareaSize, Theme};
+use thaw::{ButtonAppearance, Card, CardHeader, ConfigProvider, Flex, Text, Theme};
 use thaw::Button;
-use assembly_compiler::parser::{parse_riscv, Rule};
+use assembly_compiler::parser::parse_riscv;
 use crate::components::editor::CodeEditor;
 
 #[component]

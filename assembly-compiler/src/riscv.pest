@@ -11,7 +11,7 @@ symbol = _{ (label ~ (instruction | directive)?) | (instruction | directive) }
 label = @{ ASCII_ALPHANUMERIC+ ~ ":" }
 mnemonic = @{ ASCII_ALPHA+ }
 
-balign = !{ "balign" ~ NUMBER+ }
+balign = { "balign" ~ WHITESPACE+ ~ NUMBER+ }
 section = { ASCII_ALPHANUMERIC+ }
 directive = ${ "." ~ (balign | section) }
 
@@ -49,73 +49,90 @@ x30 = { "x30" | "t5" }
 x31 = { "x31" | "t6" }
 
 register = {
-    (
     x10 | x11 | x12 | x13 | x14 | x15 | x16 | x17 | x18 | x19 |
     x20 | x21 | x22 | x23 | x24 | x25 | x26 | x27 | x28 | x29 |
     x30 | x31 | x0 | x1 | x2 | x3 | x4 | x5 | x6 | x7 | x8 | x9
-    )
 }
 
-immediate = { ("0x" ~ HEX_DIGIT+) | ("0b" ~ ('0'..'1')+) | ("-"? ~ ASCII_DIGIT+) }
+immediate =  { ("0x" ~ HEX_DIGIT+) | ("0b" ~ ('0'..'1')+) | ("-"? ~ ASCII_DIGIT+) }
 
 // Pseudo instructions
-pseudo_nop = { "nop" }
-pseudo_li = { "li" ~ register ~ "," ~ immediate }
-pseudo_la = { "la" ~ register ~ "," ~ label }
-pseudo_mv = { "mv" ~ register ~ "," ~ register }
-pseudo_not = { "not" ~ register ~ "," ~ register }
-pseudo_neg = { "neg" ~ register ~ "," ~ register }
-pseudo_seqz = { "seqz" ~ register ~ "," ~ register }
-pseudo_snez = { "snez" ~ register ~ "," ~ register }
-pseudo_sltz = { "sltz" ~ register ~ "," ~ register }
-pseudo_sgtz = { "sgtz" ~ register ~ "," ~ register }
-pseudo_beqz = { "beqz" ~ register ~ "," ~ register }
-pseudo_bnez = { "bnez" ~ register ~ "," ~ register }
-pseudo_ble = { "ble" ~ register ~ "," ~ register }
-pseudo_bgez = { "bgez" ~ register ~ "," ~ register }
-pseudo_bltz = { "bltz" ~ register ~ "," ~ register }
-pseudo_bgtz = { "bgtz" ~ register ~ "," ~ register }
-pseudo_bgt = { "bgt" ~ register ~ "," ~ register }
-pseudo_bgtu = { "bgtu" ~ register ~ "," ~ register }
-pseudo_bleu = { "bleu" ~ register ~ "," ~ register }
-pseudo_j = { "j" ~ register ~ "," ~ register }
-pseudo_jr = { "jr" ~ register ~ "," ~ register }
-pseudo_ret = { "ret" ~ register ~ "," ~ register }
+pseudo_nop = ${ "nop" }
+pseudo_li = ${ "li" ~ WHITESPACE+ ~ register ~ "," ~ immediate }
+pseudo_la = ${ "la" ~ WHITESPACE+ ~ register ~ "," ~ ASCII_ALPHANUMERIC+ }
+pseudo_mv = ${ "mv" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_not = ${ "not" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_neg = ${ "neg" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_seqz = ${ "seqz" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_snez = ${ "snez" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_sltz = ${ "sltz" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_sgtz = ${ "sgtz" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_beqz = ${ "beqz" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_bnez = ${ "bnez" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_ble = ${ "ble" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_bgez = ${ "bgez" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_bltz = ${ "bltz" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_bgtz = ${ "bgtz" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_bgt = ${ "bgt" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_bgtu = ${ "bgtu" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_bleu = ${ "bleu" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_j = ${ "j" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_jr = ${ "jr" ~ WHITESPACE+ ~ register ~ "," ~ register }
+pseudo_ret = ${ "ret" ~ WHITESPACE+ ~ register ~ "," ~ register }
 
-r_type_literal = { "add" | "sub" | "xor" | "or" | "and" | "sll" | "srl" | "sra" | "slt" | "sltu" }
-i_type_literal = { "addi" | "slli" | "slti" | "sltiu" | "xori" | "ori" | "andi" | "srli" | "srai" }
-
-r_type = { r_add | r_sub | r_xor | r_or | r_and | r_sll | r_srl | r_sra | r_slt | r_sltu }
-i_type = { i_addi | i_slli | i_slti | i_sltiu | i_xori | i_ori | i_andi | i_srli | i_srai }
-s_type = { ("sb" | "sh" | "sw") ~ register ~ "," ~ immediate ~ "[" ~ register ~ "]" }
-b_type = { ("beq" | "bne" | "blt" | "bge" | "bltu" | "bgeu") ~ register ~ "," ~ register ~ (label | immediate) }
-u_type = { ("lui" | "auipc") ~ register ~ immediate }
-j_type = { "jal" ~ register ~ (label | immediate) }
+r_type = _{ r_add | r_sub | r_xor | r_or | r_and | r_sll | r_srl | r_sra | r_slt | r_sltu }
+i_type = _{ i_addi | i_slli | i_slti | i_sltiu | i_xori | i_ori | i_andi | i_srli | i_srai }
+s_type = _{ s_sb | s_sh | s_sw }
+b_type = _{ b_beq | b_bne | b_blt | b_bge | b_bltu | b_bgeu }
+u_type = _{ u_lui | u_auipc }
+j_type = _{ j_jal }
 pseudo = _{
     pseudo_nop | pseudo_li | pseudo_la | pseudo_mv | pseudo_not | pseudo_neg |
     pseudo_seqz | pseudo_snez | pseudo_sltz | pseudo_sgtz | pseudo_beqz | pseudo_bnez |
     pseudo_ble | pseudo_bgez | pseudo_bltz | pseudo_bgtz | pseudo_bgt | pseudo_bgtu |
     pseudo_bleu | pseudo_j | pseudo_jr | pseudo_ret
 }
-instruction = { (r_type | i_type | s_type | b_type | u_type | j_type | pseudo)}
+instruction = { r_type | i_type | s_type | b_type | u_type | j_type | pseudo }
 
-r_add = { "add" ~ register ~ "," ~ register ~ "," ~ register }
-r_sub = { "sub" ~ register ~ "," ~ register ~ "," ~ register }
-r_xor = { "xor" ~ register ~ "," ~ register ~ "," ~ register }
-r_or = { "or" ~ register ~ "," ~ register ~ "," ~ register }
-r_and = { "and" ~ register ~ "," ~ register ~ "," ~ register }
-r_sll = { "sll" ~ register ~ "," ~ register ~ "," ~ register }
-r_srl = { "srl" ~ register ~ "," ~ register ~ "," ~ register }
-r_sra = { "sra" ~ register ~ "," ~ register ~ "," ~ register }
-r_slt = { "slt" ~ register ~ "," ~ register ~ "," ~ register }
-r_sltu = { "sltu" ~ register ~ "," ~ register ~ "," ~ register }
+r_type_params = !{ register ~ "," ~ register ~  "," ~ register }
+r_add = ${ "add" ~ WHITESPACE+ ~ r_type_params }
+r_sub = ${ "sub" ~ WHITESPACE+ ~ r_type_params }
+r_xor = ${ "xor" ~ WHITESPACE+ ~ r_type_params }
+r_or = ${ "or" ~ WHITESPACE+ ~ r_type_params }
+r_and = ${ "and" ~ WHITESPACE+ ~ r_type_params }
+r_sll = ${ "sll" ~ WHITESPACE+ ~ r_type_params }
+r_srl = ${ "srl" ~ WHITESPACE+ ~ r_type_params }
+r_sra = ${ "sra" ~ WHITESPACE+ ~ r_type_params }
+r_slt = ${ "slt" ~ WHITESPACE+ ~ r_type_params }
+r_sltu = ${ "sltu" ~ WHITESPACE+ ~ r_type_params }
 
-i_addi = { "addi" ~ register ~ "," ~ register ~ "," ~ immediate }
-i_slli = { "slli" ~ register ~ "," ~ register ~ "," ~ immediate }
-i_slti = { "slti" ~ register ~ "," ~ register ~ "," ~ immediate }
-i_sltiu = { "sltiu" ~ register ~ "," ~ register ~ "," ~ immediate }
-i_xori = { "xori" ~ register ~ "," ~ register ~ "," ~ immediate }
-i_ori = { "ori" ~ register ~ "," ~ register ~ "," ~ immediate }
-i_andi = { "andi" ~ register ~ "," ~ register ~ "," ~ immediate }
-i_srli = { "srli" ~ register ~ "," ~ register ~ "," ~ immediate }
-i_srai = { "srai" ~ register ~ "," ~ register ~ "," ~ immediate }
+i_type_params = !{ register ~ "," ~ register ~ "," ~ immediate }
+i_addi = ${ "addi" ~ WHITESPACE+ ~ i_type_params }
+i_slli = ${ "slli" ~ WHITESPACE+ ~ i_type_params }
+i_slti = ${ "slti" ~ WHITESPACE+ ~ i_type_params }
+i_sltiu = ${ "sltiu" ~ WHITESPACE+ ~ i_type_params }
+i_xori = ${ "xori" ~ WHITESPACE+ ~ i_type_params }
+i_ori = ${ "ori" ~ WHITESPACE+ ~ i_type_params }
+i_andi = ${ "andi" ~ WHITESPACE+ ~ i_type_params }
+i_srli = ${ "srli" ~ WHITESPACE+ ~ i_type_params }
+i_srai = ${ "srai" ~ WHITESPACE+ ~ i_type_params }
+
+s_type_params = !{ register ~ "," ~ immediate ~ "[" ~ register ~ "]" }
+s_sb = ${ "sb" ~ WHITESPACE+ ~ s_type_params }
+s_sh = ${ "sh" ~ WHITESPACE+ ~ s_type_params }
+s_sw = ${ "sw" ~ WHITESPACE+ ~ s_type_params }
+
+b_type_params = !{ register ~ "," ~ register ~ "," ~ (immediate | ASCII_ALPHANUMERIC+) }
+b_beq = ${ "beq" ~ WHITESPACE+ ~ b_type_params }
+b_bne = ${ "bne" ~ WHITESPACE+ ~ b_type_params }
+b_blt = ${ "blt" ~ WHITESPACE+ ~ b_type_params }
+b_bge = ${ "bge" ~ WHITESPACE+ ~ b_type_params }
+b_bltu = ${ "bltu" ~ WHITESPACE+ ~ b_type_params }
+b_bgeu = ${ "bgeu" ~ WHITESPACE+ ~ b_type_params }
+
+u_type_params = !{ register ~ "," ~ immediate }
+u_lui = ${ "lui" ~ WHITESPACE+ ~ u_type_params }
+u_auipc = ${ "auipc" ~ WHITESPACE+ ~ u_type_params }
+
+j_type_params = !{ register ~ "," ~ (immediate | ASCII_ALPHANUMERIC+) }
+j_jal = ${ "jal" ~ WHITESPACE+ ~ j_type_params }

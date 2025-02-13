@@ -1,4 +1,3 @@
-use pest_ast::FromPest;
 
 //#[derive(Debug, FromPest)]
 pub struct Program {

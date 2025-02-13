@@ -19,9 +19,9 @@ pub fn CodeEditor(content: RwSignal<String>) -> impl IntoView {
     let sync_scroll = move |ev: ev::Event| {
         let textarea = event_target::<web_sys::HtmlTextAreaElement>(&ev);
         let scroll_top = textarea.scroll_top();
-        line_numbers_ref.get().map(|div| {
+        if let Some(ref div) = line_numbers_ref.get() {
             div.set_scroll_top(scroll_top);
-        });
+        }
     };
 
     view! {
