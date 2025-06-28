@@ -1,9 +1,9 @@
+use crate::components::editor::CodeEditor;
+use assembly_compiler::parser::parse_riscv;
 use leptos::logging::log;
 use leptos::prelude::*;
-use thaw::{ButtonAppearance, Card, CardHeader, ConfigProvider, Flex, Text, Theme};
 use thaw::Button;
-use assembly_compiler::parser::parse_riscv;
-use crate::components::editor::CodeEditor;
+use thaw::{ButtonAppearance, Card, CardHeader, ConfigProvider, Flex, Text, Theme};
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -14,8 +14,15 @@ pub fn App() -> impl IntoView {
         let assembly_text = editor_content.with(|val| val.clone());
         let parsed = parse_riscv(&assembly_text);
         let result_text = match parsed {
-            Ok(_) => {"Parsed ok!".to_string()}
-            Err(e) => {format!("{e}")}
+            Ok(program) => format!("{:?}", program),
+            Err(e) => {
+                // TODO: Add Ariadne error printing
+                let mut string = String::new();
+                for error in e {
+                    string.push_str(&format!("{error}\n"));
+                }
+                string
+            }
         };
         log!("{}", result_text);
         assembly_result.set(result_text);

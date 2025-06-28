@@ -1,6 +1,6 @@
+use itertools::Itertools;
 use leptos::prelude::*;
 use leptos::{component, ev, html};
-use itertools::Itertools;
 use thaw::{Flex, FlexGap};
 
 ///

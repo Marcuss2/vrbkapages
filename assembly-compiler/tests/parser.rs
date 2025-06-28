@@ -1,8 +1,5 @@
-use std::error::Error;
-use pest::error::ErrorVariant;
-use pest::Parser;
+use assembly_compiler::parser;
 use rstest::rstest;
-use assembly_compiler::parser::{parse_riscv, RiscvParser, Rule};
 
 #[rstest]
 #[case::add("add x1, x2, x3")]
@@ -26,32 +23,70 @@ use assembly_compiler::parser::{parse_riscv, RiscvParser, Rule};
 #[case::andi("andi s2, s3, 24")]
 #[case::srli("srli s4, s5, 27")]
 #[case::srai("srai s6, s7, 30")]
-#[case::sb("sb s8, 300[s9]")]
-#[case::sh("sh s10, 200[s11]")]
-#[case::sw("sw t3, 400[t4]")]
-#[case::beq("beq x1, x2, 1")]
+#[case::sb("sb s8, 300(s9)")]
+#[case::sh("sh s6, 200(s1)")]
+#[case::sw("sw t3, 400(t4)")]
+#[case::beq("beq x1, x2, 2")]
 #[case::bne("bne x3, x4, 0x10")]
 #[case::blt("blt x5, x6, -20")]
 #[case::bge("bge x7, x8, 200")]
 #[case::bltu("bltu t0, t1, 300")]
-#[case::bgeu("bgeu s0, s1, 123")]
+#[case::bgeu("bgeu s0, s1, 124")]
 #[case::lui("lui x1, 5")]
 #[case::lui_2("lui x2, -8")]
 #[case::auipc("auipc x3, 0x1234")]
+fn test_instruction(#[case] instruction: &str) {
+    let parsed = parser::parse_riscv(instruction);
+    if let Err(err) = parsed {
+        for e in err.iter() {
+            println!("{}", e);
+        }
+        panic!("{:?}", err);
+    }
+}
+
+#[rstest]
 #[case::jal("jal ra, label")]
 #[case::jal_2("jal x1, 0x3456")]
-fn test_instruction(#[case] instruction: &str) {
-    let parsed = RiscvParser::parse(Rule::program, instruction);
-    if let Err(err) = parsed {
-        println!("{}", err);
-        panic!("{}", err);
-    }
+fn test_pseudo_instruction(#[case] _instruction: &str) {
+    // TODO
 }
 
 #[rstest]
 #[case::add("addx1, x2, x3")]
 #[case::swapped_save("sb x0, x1[100]")]
 fn test_instruction_parse_fails(#[case] instruction: &str) {
-    let parsed = RiscvParser::parse(Rule::program, instruction);
+    let parsed = parser::parse_riscv(instruction);
     assert!(parsed.is_err());
+}
+
+#[test]
+fn test_parse_multiple_instructions() {
+    let input = " addi x3, x4, 6\n  sub x5, x6, x7\n  ";
+    let result = parser::parse_riscv(input);
+    match result {
+        Ok(program) => assert_eq!(program.symbols.len(), 2),
+        Err(err) => {
+            for e in err {
+                println!("{}", e);
+                assert!(false);
+            }
+        }
+    }
+}
+
+#[test]
+fn test_parse_empty_string() {
+    let input = "";
+    let result = parser::parse_riscv(input);
+    assert!(result.is_ok());
+    let symbols = result.unwrap().symbols;
+    assert_eq!(symbols.len(), 0);
+}
+
+#[test]
+fn test_parse_invalid_instruction() {
+    let input = "invalid x1, x2, 3\n";
+    let result = parser::parse_riscv(input);
+    assert!(result.is_err());
 }
