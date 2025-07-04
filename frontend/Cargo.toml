@@ -4,5 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-leptos = { version = "0.7.3", features = ["csr"] }
+leptos = { version = "0.7.8", features = ["csr"] }
 leptos_router = "0.7.4"
+thaw = { version = "0.4.7", features = ["csr"] }
+thaw_utils = { version = "0.1.1", features = ["csr"] }
