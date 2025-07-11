@@ -183,9 +183,10 @@ pub fn App() -> impl IntoView {
                                         </NavItem>
                                     </Flex>
                                 </NavDrawer>
-                                <div>
+                                <Flex>
+                                    <Button><Link href="https://github.com/Marcuss2/vrbkapages">"Source"</Link></Button>
                                     <Button on_click=change_theme>"Theme"</Button>
-                                </div>
+                                </Flex>
                             </Flex>
                         </LayoutHeader>
                         <div style="padding: 0; background-color: var(--colorNeutralBackground1);">
