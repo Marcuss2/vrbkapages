@@ -59,6 +59,7 @@ pub fn CodeEditor(content: RwSignal<String>) -> impl IntoView {
                     font-family: inherit;
                     font-size: inherit;
                     line-height: inherit;
+                    color: var(--color-text-secondary);
                 "
                 rows=20
                 cols=80

@@ -16,3 +16,4 @@ thaw_utils = { version = "0.1.1", features = ["csr"] }
 reactive_stores = "0.1.5"
 itertools = "0.14.0"
 assembly-compiler = { path = "../assembly-compiler" }
+belt-interpreter = { path = "../belt-interpreter" }

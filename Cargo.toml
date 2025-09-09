@@ -2,10 +2,12 @@
 
 resolver = "2"
 
-members = [ "assembly-compiler",
+members = [
+    "assembly-compiler",
     "backend",
+    "belt-interpreter",
     "frontend",
-    "frontend-assembly"
+    "frontend-assembly",
 ]
 
 [profile.wasm-release]

@@ -9,6 +9,7 @@ pub struct Program {
 #[derive(Debug, From)]
 pub enum Symbol {
     Instruction(Instruction),
+    Comment,
     Directive(Directive),
 }
 

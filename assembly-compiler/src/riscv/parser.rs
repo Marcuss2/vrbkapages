@@ -1,8 +1,8 @@
-use crate::ast::{
+use crate::chumsky_utils::integer;
+use crate::riscv::ast::{
     BImmediate, BOpcode, IImmediate, IOpcode, Instruction, LOpcode, LSImmediate, Program, ROpcode,
     Register, SOpcode, Symbol, UImmediate, UOpcode,
 };
-use crate::chumsky_utils::integer;
 use chumsky::prelude::*;
 use chumsky::text::{inline_whitespace, newline, whitespace};
 

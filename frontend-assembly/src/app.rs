@@ -1,49 +1,25 @@
-use crate::components::editor::CodeEditor;
-use assembly_compiler::parser::parse_riscv;
-use leptos::logging::log;
+use crate::{components::{belt_viewer::BeltViewer, editor_panel::EditorPanel, state_visualization::StateVisualization, status_bar::StatusBar}, state::{AppState, ExecutionMode}};
 use leptos::prelude::*;
-use thaw::Button;
-use thaw::{ButtonAppearance, Card, CardHeader, ConfigProvider, Flex, Text, Theme};
+use thaw::Flex;
 
 #[component]
 pub fn App() -> impl IntoView {
-    let editor_content = RwSignal::new(String::new());
-    let assembly_result = thaw_utils::Model::from(String::new());
-
-    let click_function = move |_| {
-        let assembly_text = editor_content.with(|val| val.clone());
-        let parsed = parse_riscv(&assembly_text);
-        let result_text = match parsed {
-            Ok(program) => format!("{:?}", program),
-            Err(e) => {
-                // TODO: Add Ariadne error printing
-                let mut string = String::new();
-                for error in e {
-                    string.push_str(&format!("{error}\n"));
-                }
-                string
-            }
-        };
-        log!("{}", result_text);
-        assembly_result.set(result_text);
-    };
+    let app_state = AppState::new();
+    let code = RwSignal::new(String::new());
+    let execution_state = RwSignal::new(ExecutionMode::Stopped);
 
     view! {
-        <ConfigProvider theme=RwSignal::new(Theme::dark())>
-            <Flex vertical=true>
-                <div class="flex gap-4 p-4">
-                    <div class="flex-1">
-                        <CodeEditor content=editor_content/>
-                    </div>
-                </div>
-                <Button appearance=ButtonAppearance::Primary on_click=click_function>Parse</Button>
-                <Card class="mt-4">
-                    <CardHeader>
-                        <b>"Parsing result"</b>
-                    </CardHeader>
-                    <Text style="white-space: pre-wrap; font-family: monospace">{move || assembly_result.get()}</Text>
-                </Card>
-            </Flex>
-        </ConfigProvider>
+        <thaw::ConfigProvider theme=RwSignal::new(thaw::Theme::dark())>
+            <thaw::Flex vertical=true>
+                    <BeltViewer machine=app_state.machine.read_only() />
+                <thaw::Flex>
+                    <thaw::Flex vertical=true style="width: 30%;">
+                        <EditorPanel execution_state=execution_state code=code />
+                        <StatusBar execution_mode=execution_state.read_only() />
+                    </thaw::Flex>
+                    <StateVisualization state=app_state.clone() />
+                </thaw::Flex>
+            </thaw::Flex>
+        </thaw::ConfigProvider>
     }
 }
