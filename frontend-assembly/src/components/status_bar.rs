@@ -1,29 +1,26 @@
-use crate::state::{AppState, ExecutionMode};
+use crate::state::ExecutionMode;
 use leptos::prelude::*;
-use thaw::Flex;
 
 #[component]
 pub fn StatusBar(execution_mode: ReadSignal<ExecutionMode>) -> impl IntoView {
     view! {
-        <Flex
-            style="padding: 8px 16px; background-color: var(--color-bg-2)"
-            justify=thaw::FlexJustify::SpaceBetween
-        >
-            <Flex>
-                <span style="font-size: 14px">
+        // Replacing thaw::Flex with HTML and Tailwind
+        <div class="flex justify-between p-2 bg-gray-800">
+            <div class="flex space-x-4">
+                <span class="text-sm">
                     "Status: " {move || match *execution_mode.read() {
                         ExecutionMode::Stopped => "Stopped",
                         ExecutionMode::Running => "Running",
                         ExecutionMode::Step => "Step",
                     }}
                 </span>
-                <span style="font-size: 14px">
-                    "Errors: None" 
+                <span class="text-sm">
+                    "Errors: None"
                 </span>
-            </Flex>
-            <span style="font-size: 14px; color: var(--color-text-secondary)">
+            </div>
+            <span class="text-sm text-gray-400">
                 "When backend developer writes UI"
             </span>
-        </Flex>
+        </div>
     }
 }

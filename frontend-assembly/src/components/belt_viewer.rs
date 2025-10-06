@@ -1,31 +1,31 @@
 use belt_interpreter::BeltMachine;
 use leptos::prelude::*;
-use crate::state::AppState;
-use thaw::{Card, Flex, Grid, GridItem};
 
 #[component]
 pub fn BeltViewer(machine: ReadSignal<BeltMachine>) -> impl IntoView {
     view! {
-        <Flex vertical=true>
-                <h5 style="font-size: 16px; font-weight: 500">"Registers"</h5>
-                <Grid cols=16>
-                    {move || machine.read().belt.iter().enumerate().map(|(i, val)| {
-                        let value_text = format!("0x{:04X}", val);
-                        
+        <div class="flex flex-col">
+            <h5 class="text-lg font-medium mb-4">"Registers"</h5>
+            <div class="grid grid-cols-16 gap-2">
+                {move || {
+                    let belt = &machine.read().belt;
+                    (0..16).map(|i| {
+                        let value = belt.peek_belt(i);
+                        let value_text = format!("0x{:04X}", value);
+
                         view! {
-                            <GridItem>
-                                <div style="text-align: center">
-                                    <div style="font-size: 12px; color: var(--color-text-secondary)">
-                                        b{i}
-                                    </div>
-                                    <div style="font-family: monospace; font-size: 14px">
-                                        {value_text}
-                                    </div>
+                            <div class="text-center">
+                                <div class="text-sm text-gray-400">
+                                    b{i}
                                 </div>
-                            </GridItem>
+                                <div class="font-mono text-sm">
+                                    {value_text}
+                                </div>
+                            </div>
                         }
-                    }).collect::<Vec<_>>()}
-                </Grid>
-        </Flex>
+                    }).collect::<Vec<_>>()
+                }}
+            </div>
+        </div>
     }
 }

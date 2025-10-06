@@ -1,50 +1,44 @@
-use leptos::prelude::*;
 use crate::state::AppState;
-use thaw::{Card, Input, Flex};
+use leptos::prelude::*;
 
 #[component]
 pub fn MemoryViewer(state: AppState) -> impl IntoView {
     let start_address = RwSignal::new("0x0".to_string());
-    
-    let parser = move |v: String| {
-        if !v.starts_with("0x") || u16::from_str_radix(v.strip_prefix("0x").unwrap(), 16).is_err() {
-            None
-        } else {
-            Some(v)
-        }
-    };
-    
+
     view! {
-        <Card>
-            <thaw::CardHeader>
-                <Flex>
-                    <h5 style="font-size: 16px; font-weight: 500">"Memory Viewer"</h5>
-                    <Input
-                        placeholder="Start address"
-                        value=start_address
-                        parser
-                    />
-                </Flex>
-            </thaw::CardHeader>
-            <thaw::CardPreview>
-                <div style="max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;">
-                    <thaw::Grid cols=4 x_gap=2 y_gap=2>
+        // Replacing thaw components with HTML and Tailwind
+        <div class="bg-gray-800 rounded-lg shadow-lg border border-gray-700">
+            <div class="px-4 py-2 border-b border-gray-700 flex justify-between items-center">
+                <h5 class="text-lg font-medium">"Memory Viewer"</h5>
+                // Simple input for start address - in a real implementation you might want a proper input component
+                <input
+                    type="text"
+                    placeholder="Start address"
+                    class="bg-gray-700 text-white px-2 py-1 rounded text-sm"
+                    on:input=move |ev| start_address.set(event_target_value(&ev))
+                    prop:value=start_address.get_untracked()
+                />
+            </div>
+            <div class="p-4">
+                <div style="max-height: 300px;" class="overflow-y-auto font-mono text-xs">
+                    <div class="grid grid-cols-4 gap-2">
                         {move || {
-                            let start = usize::from_str_radix(&*start_address.read().strip_prefix("0x").unwrap(), 16).unwrap();
+                            // Note: This is a simplified version. In a real implementation, you'd want proper error handling
+                            let start = usize::from_str_radix(&*start_address.read().strip_prefix("0x").unwrap_or("0"), 16).unwrap_or(0);
                             (start..start + 32).map(|addr| {
                                 let value = state.machine.read().memory[addr as usize];
                                 view! {
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="color: var(--color-text-secondary)">
+                                    <div class="flex justify-between text-gray-300">
+                                        <span>
                                             {format!("0x{:04X}: 0x{:04X}", addr, value)}
                                         </span>
                                     </div>
                                 }
                             }).collect::<Vec<_>>()
                         }}
-                    </thaw::Grid>
+                    </div>
                 </div>
-            </thaw::CardPreview>
-        </Card>
+            </div>
+        </div>
     }
 }

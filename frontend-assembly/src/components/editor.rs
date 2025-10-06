@@ -1,7 +1,6 @@
 use itertools::Itertools;
 use leptos::prelude::*;
 use leptos::{component, ev, html};
-use thaw::{Flex, FlexGap};
 
 ///
 /// Simple code editor component which always updates on each change.
@@ -25,42 +24,18 @@ pub fn CodeEditor(content: RwSignal<String>) -> impl IntoView {
     };
 
     view! {
-        <Flex vertical=false gap=FlexGap::Small
-            style="
-                border: 5px solid black;
-                border-radius: 10px;">
+        // Replacing thaw::Flex with HTML and Tailwind
+        <div class="flex gap-1 border-4 border-black rounded-lg">
             <div
                 node_ref=line_numbers_ref
-                style="
-                    padding: 10px;
-                    border-right: 1px solid #ddd;
-                    text-align: right;
-                    color: #666;
-                    overflow-y: hidden;
-                    user-select: none;
-                    white-space: pre;
-                    box-sizing: border-box;
-                "
+                class="p-2 border-r border-gray-300 text-right text-gray-500 overflow-hidden select-none whitespace-pre box-border"
                 aria-hidden="true"
             >
-                <pre style="margin: 0">{line_numbers}</pre>
+                <pre class="m-0">{line_numbers}</pre>
             </div>
 
             <textarea
-                style="
-                    padding: 10px;
-                    border: none;
-                    outline: none;
-                    resize: none;
-                    background: transparent;
-                    overflow-y: auto;
-                    box-sizing: border-box;
-                    white-space: pre;
-                    font-family: inherit;
-                    font-size: inherit;
-                    line-height: inherit;
-                    color: var(--color-text-secondary);
-                "
+                class="p-2 border-none outline-none resize-none bg-transparent overflow-y-auto box-border whitespace-pre text-gray-300"
                 rows=20
                 cols=80
                 on:input=move |ev| content.set(event_target_value(&ev))
@@ -68,6 +43,6 @@ pub fn CodeEditor(content: RwSignal<String>) -> impl IntoView {
                 prop:value=content.get_untracked()
                 spellcheck="false"
             />
-        </Flex>
+        </div>
     }
 }

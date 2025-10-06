@@ -6,5 +6,10 @@ wasm_opt = "version_122"
 
 [[hooks]]
 stage = "pre_build"
+command = "npx"
+command_arguments = ["npx", "tailwindcss", "-i", "./tailwind.css", "-o", "./style/output.css", "--minify"]
+
+[[hooks]]
+stage = "pre_build"
 command = "cargo"
 command_arguments = ["check", "--target", "wasm32-unknown-unknown"]

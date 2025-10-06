@@ -1,12 +1,14 @@
 [package]
 name = "assembly-compiler"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 chumsky = "0.10.0"
 derive_more = { version = "2.0.1", features = ["from"] }
+logos = "0.16.0"
 num-traits = { version = "0.2.19", features = ["i128"] }
+parse_int = "0.9.0"
 
 
 [dev-dependencies]

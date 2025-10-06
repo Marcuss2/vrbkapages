@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use belt_interpreter::BeltMachine;
 use leptos::prelude::RwSignal;
 
@@ -17,10 +15,7 @@ pub struct AppState {
 impl AppState {
     pub fn new() -> AppState {
         AppState {
-            machine: RwSignal::new(BeltMachine {
-                belt: [0; 16],
-                memory: [0; 65536],
-            }),
+            machine: RwSignal::new(BeltMachine::new()),
         }
     }
 }
