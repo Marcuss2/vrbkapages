@@ -1,1 +1,6 @@
 /target
+/dist-assembly
+/dist-frontend
+**/node_modules
+**/dist
+**/style
