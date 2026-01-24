@@ -1,0 +1,19 @@
+{
+  "name": "frontend-assembly",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:tailwind": "npx @tailwindcss/cli -i ./style/tailwind.css -o ./style/output.css",
+    "build": "npm run build:tailwind && trunk build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "tailwindcss": "^4",
+    "@tailwindcss/cli": "^4"
+  }
+}
