@@ -14,7 +14,7 @@ spec:
         - containerPort: 8080
           hostPort: 8080
       volumeMounts:
-        - name: config-vol
+        - name: sentinel-config
           mountPath: /etc/sentinel/sentinel.kdl:z
           readOnly: true
         - name: cert-vol
@@ -25,10 +25,10 @@ spec:
           readOnly: true
 
   volumes:
-    - name: config-vol
+    - name: sentinel-config
       hostPath:
-        path: /home/opc/vrbkapages/config/
-        type: Directory
+        path: /home/opc/vrbkapages/config/sentinel.kdl
+        type: File
     - name: cert-vol
       hostPath:
         path: /home/opc/certificates
