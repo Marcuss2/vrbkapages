@@ -1,5 +1,5 @@
 [build]
-public_url = "/assembly/"
+public_url = "/"
 
 [tools]
 wasm_opt = "version_122"

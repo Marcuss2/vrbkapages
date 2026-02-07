@@ -1,0 +1,75 @@
+system {
+    worker-threads 0  // auto-detect CPU cores
+}
+
+listeners {
+    listener "http" {
+        address "0.0.0.0:8080"
+        protocol "http"
+    }
+    listener "https" {
+        address "0.0.0.0:8443"
+        protocol "https"
+        
+        tls {
+            cert-file "/etc/sentinel/certs/server.crt"
+            key-file "/etc/sentinel/certs/server.key"
+            min-version "TLS1.2"
+        }
+    }
+}
+
+routes {
+    route "base" {
+        priority 1
+        matches {
+            path-prefix "/"
+            method "GET"
+        }
+        
+        service-type "static"
+        static-files {
+            root "/www"
+            index "index.html"
+            fallback "index.html"
+            cache-control "no-cache"
+            compress #true
+        }
+        policies {
+            response-headers {
+                set {
+                    "X-Content-Type-Options" "nosniff"
+                    "X-Frame-Options" "DENY"
+                    "X-XSS-Protection" "1; mode=block"
+                    "Referrer-Policy" "strict-origin-when-cross-origin"
+                }
+            }
+        }
+    }
+    route "assembly" {
+        priority 2
+        matches {
+            path-prefix "/assembly"
+        }
+        
+        service-type "static"
+        static-files {
+            root "/www/assembly"
+            index "index.html"
+            fallback "index.html"
+            cache-control "no-cache"
+            compress #true
+        }
+        policies {
+            response-headers {
+                set {
+                    "X-Content-Type-Options" "nosniff"
+                    "X-Frame-Options" "DENY"
+                    "X-XSS-Protection" "1; mode=block"
+                    "Referrer-Policy" "strict-origin-when-cross-origin"
+                }
+            }
+        }
+    }
+}
+

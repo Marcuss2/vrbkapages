@@ -6,8 +6,8 @@ metadata:
     app: vrbkapages-service
 spec:
   containers:
-    - name: rpxy
-      image: ghcr.io/junkurihara/rust-rpxy:latest-slim
+    - name: sentinel-proxy
+      image: ghcr.io/raskell-io/sentinel:26.02_4
       ports:
         - containerPort: 8443
           hostPort: 8443
@@ -15,47 +15,14 @@ spec:
           hostPort: 8080
       volumeMounts:
         - name: config-vol
-          mountPath: /rpxy/config:z
+          mountPath: /etc/sentinel/sentinel.kdl:z
           readOnly: true
         - name: cert-vol
-          mountPath: /etc/certificates:z
+          mountPath: /etc/sentinel/certs:z
           readOnly: true
-      command: ["/rpxy/bin/rpxy"]
-      args: ["--config", "/rpxy/config/rpxy.toml"]
-
-    - name: root-dist
-      image: docker.io/svenstaro/miniserve
-      ports:
-        - containerPort: 4000
-      env:
-        - name: MINISERVE_PORT
-          value: "4000"
-        - name: MINISERVE_SPA
-          value: "true"
-        - name: MINISERVE_INDEX
-          value: "index.html"
-      args: ["/dist"]
-      volumeMounts:
-        - name: site-vol
-          mountPath: /dist:z
-
-    - name: assembly-dist
-      image: docker.io/svenstaro/miniserve
-      ports:
-        - containerPort: 4001
-      env:
-        - name: MINISERVE_PORT
-          value: "4001"
-        - name: MINISERVE_SPA
-          value: "true"
-        - name: MINISERVE_INDEX
-          value: "index.html"
-        - name: MINISERVE_ROUTE_PREFIX
-          value: "/assembly"
-      args: ["/dist"]
-      volumeMounts:
-        - name: assembly-vol
-          mountPath: /dist:z
+        - name: static-vol
+          mountPath: /www:z
+          readOnly: true
 
   volumes:
     - name: config-vol
@@ -66,11 +33,7 @@ spec:
       hostPath:
         path: /home/opc/certificates
         type: Directory
-    - name: site-vol
+    - name: static-vol
       hostPath:
-        path: /home/opc/vrbkapages/dist-frontend
-        type: Directory
-    - name: assembly-vol
-      hostPath:
-        path: /home/opc/vrbkapages/dist-assembly
+        path: /home/opc/vrbkapages/dist
         type: Directory
