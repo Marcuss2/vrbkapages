@@ -3,16 +3,12 @@ system {
 }
 
 listeners {
-    listener "http" {
-        address "0.0.0.0:8080"
-        protocol "http"
-    }
     listener "https" {
         address "0.0.0.0:8443"
         protocol "https"
-        
+
         tls {
-            cert-file "/etc/sentinel/certs/server.crt"
+            cert-file "/etc/sentinel/certs/server.pem"
             key-file "/etc/sentinel/certs/server.key"
             min-version "TLS1.2"
         }
@@ -26,7 +22,7 @@ routes {
             path-prefix "/"
             method "GET"
         }
-        
+
         service-type "static"
         static-files {
             root "/www"
@@ -51,7 +47,7 @@ routes {
         matches {
             path-prefix "/assembly"
         }
-        
+
         service-type "static"
         static-files {
             root "/www/assembly"
@@ -72,4 +68,3 @@ routes {
         }
     }
 }
-

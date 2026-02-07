@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
     - name: sentinel-proxy
-      image: ghcr.io/raskell-io/sentinel:26.02_4
+      image: ghcr.io/raskell-io/sentinel:latest
       ports:
         - containerPort: 8443
           hostPort: 8443
@@ -15,7 +15,7 @@ spec:
           hostPort: 8080
       volumeMounts:
         - name: sentinel-config
-          mountPath: /etc/sentinel/sentinel.kdl:z
+          mountPath: /etc/sentinel/config.kdl:z
           readOnly: true
         - name: cert-vol
           mountPath: /etc/sentinel/certs:z
