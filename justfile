@@ -35,15 +35,6 @@ deploy:
 
     echo "Deploying vrbkapages pod..."
 
-    # Ensure config directory exists
-    mkdir -p /home/opc/vrbkapages/config
-
-    # Copy pingap config if not exists
-    if [ ! -f "/home/opc/vrbkapages/config/pingap.toml" ]; then
-        echo "Copying Pingap configuration..."
-        cp pingap.toml /home/opc/vrbkapages/config/
-    fi
-
     # Stop existing pod if running
     if podman pod exists vrbkapages-pod; then
         echo "Stopping existing pod..."
